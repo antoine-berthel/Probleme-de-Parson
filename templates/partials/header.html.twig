@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+{% endblock %}
+
+{% block leftMenu %}
+    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+        {% if is_granted('ROLE_ETUDIANT') %}
+            <li class="nav-item">
+                <a class="nav-link" href="/etudiant/afficher-cours">Cours</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/etudiant/afficher-mes-cours">Mes cours</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/etudiant/historique">Historique</a>
+            </li>
+        {% elseif is_granted('ROLE_ENSEIGNANT')%}
+            <li class="nav-item">
+                <a class="nav-link" href="/enseignant/afficher-cours">Cours</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/enseignant/afficher-exercices">Exercices</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/enseignant/creer-cours">Créer un cours</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/enseignant/creer-exercice">Créer un exercice</a>
+            </li>
+        {% endif %}
+    {% else %}
+        <li class="nav-item">
+            <a class="nav-link" href="/login">Connexion</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/register">Créer un compte</a>
+        </li>
+    {% endif %}
+{% endblock %}
+
+{% block rightMenu %}
+    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+        <li class="nav-item">
+            <a class="nav-link" href="/mon-compte">Paramètres</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/logout">Déconnexion</a>
+        </li>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+{% endblock %}
+
+{% block title %}
+	Afficher cours
+{% endblock %}
+
+{% block header %}
+    {{ include('partials/header.html.twig') }}
+{% endblock %}
+
+{% block body %}
+<h1>Cours</h1>
+<div class="">
+    <ul class="exercics list-group list-group-flush">
+        {% if mes_cours is defined %}
+            {% for inscription in app.user.inscriptions %}
+                {% set cours = inscription.cours %}
+                <li class="list-group-item">
+                    <div class="row">
+                        <div>
+                            <h4>{{ cours.name }}</h4>
+                            <label>{{ cours.owner.firstName }} {{ cours.owner.lastName }}</label>
+                        </div>
+                        <div class="ml-auto">
+                            <div class=" btn-group">
+                                {% if is_granted('ROLE_ETUDIANT') %}
+                                    <a href="{{ path('get_exo_etu', {id: cours.id, nb: 0}) }}"><button type="button" class="btn btn-secondary">Commencer</button></a>
+                                    <a href="{{ path('desinscription_cours', {id: inscription.id}) }}"><button type="button" class="btn btn-danger">me désinscrire</button></a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        {% else %}
+            {% for cours in coursList %}
+                <li class="list-group-item">
+                    <div class="row">
+                        <div>
+                            <h4>{{ cours.name }}</h4>
+                            <label>{{ cours.owner.firstName }} {{ cours.owner.lastName }}</label>
+                        </div>
+                        <div class="ml-auto">
+                            <div class=" btn-group">
+                                {% if is_granted('ROLE_ENSEIGNANT') %}
+                                    <a href="{{ path('get_exo', {id: cours.id}) }}"><button type="button" class="btn btn-info" >Voir</button></a>
+                                    <a href="{{ path('supprimer_cours', {id: cours.id}) }}"><button type="button" class="btn btn-secondary btn-danger" ><span aria-hidden="true">&times;</span></button></a>
+                                {% elseif is_granted('ROLE_ETUDIANT') %}
+                                    {% set isHere = false %}
+                                    {% for inscription in app.user.inscriptions %}
+                                        {% if inscription.cours.id == cours.id %}
+                                            {% set isHere = true %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if isHere %}
+                                        <a href="{{ path('inscription_cours', {id: cours.id}) }}"><button type="button" class="btn btn-info" disabled>s'inscrire</button></a>
+                                    {% else %}
+                                        <a href="{{ path('inscription_cours', {id: cours.id}) }}"><button type="button" class="btn btn-info">s'inscrire</button></a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        {% endif %}
+    </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+{% endblock %}
+
+{% block title %}
+	Cours
+{% endblock %}
+
+{% block header %}
+    {{ include('partials/header.html.twig') }}
+{% endblock %}
+
+{% block body %}
+    <h1>{{ cours.name }}</h1>
+    <div>
+        <ul class="exercices list-group list-group-flush ">
+            {% for exo in exercices %}
+                <li class="list-group-item">
+                    <div class="row">
+                        <div>
+                            <a class="btn" href="{{ path('afficher_exercice', {id: exo.id}) }}"><h4>{{ exo.name }}</h4></a>
+                        </div>
+                        <div class="col-sm-5">
+                            <p style="text-overflow:ellipsis" >{{ exo.description }}</p>
+                        </div>
+                        <div class="ml-auto">
+                            <div class=" btn-group">
+                                {% if exo in cours.exercices %}
+                                    <div class="">
+                                        {% if nbInscrit > 0 %}
+                                            <label style="text-overflow:ellipsis" >Taux de réussite {{ exo.success * 100 / nbInscrit }}%</label>
+                                        {% endif %}
+                                    </div>
+                                    <a href="{{ path('remove_exo_cours', {id_exo: exo.id, id_cours: cours.id}) }}">
+                                        <button type="button" class="btn btn-secondary btn-danger">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </a>
+                                {% else %}
+                                    <a href="{{ path('add_exo_cours', {id_exo: exo.id, id_cours: cours.id}) }}">
+                                        <button type="button" class="btn btn-secondary btn-success">
+                                            <span aria-hidden="true">&plus;</span>
+                                        </button>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
+
+
+{% block javascripts %}
+{% endblock %}

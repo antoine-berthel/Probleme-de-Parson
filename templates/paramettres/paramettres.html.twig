@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+{% endblock %}
+
+{% block title %}
+	profil
+{% endblock %}
+
+{% block header %}
+    {{ include('partials/header.html.twig') }}
+{% endblock %}
+
+{% block body %}
+<h1>Paramètres</h1>
+
+<div class="input-group mb-3">
+	<form method="post">
+		<h2>Changer votre adresse email</h2>
+		<small>(adresse actuelle : {{ app.user.email }})</small>
+
+		<div class="row">
+			<div class="col">
+				<input type="email" name="email1" id="inputEmail" class="form-control" placeholder="Nouvelle adresse Email" required>
+			</div>
+			<div class="col">
+				<input type="email" name="email2" id="inputEmail" class="form-control" placeholder="Confirmation de votre nouvelle adresse Email" required>
+			</div>
+		</div>
+
+		<input type="password" name="password" id="inputPassword" class="form-control" placeholder="Mot de passe" required>
+
+		<button class="btn btn-lg btn-primary" type="submit">
+			Valider
+		</button>
+	</form>
+</div>
+<div class="input-group mb-3">
+	<form method="post">
+		<h2>Changer votre mot de passe</h2>
+
+		<input type="password" name="password" id="inputPassword" class="form-control" placeholder="Mot de passe actuel" required>
+
+		<div class="row">
+			<div class="col">
+				<input type="password" name="password1" id="inputPassword" class="form-control" placeholder="Nouveau mot de passe" required>
+			</div>
+			<div class="col">
+				<input type="password" name="password2" id="inputPassword" class="form-control" placeholder="Confirmation de votre nouveau mot de passe" required>
+			</div>
+		</div>
+		<button class="btn btn-lg btn-primary" type="submit">
+			Valider
+		</button>
+	</form>
+</div>
+{% endblock %}

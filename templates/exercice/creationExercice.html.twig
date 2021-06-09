@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+{% endblock %}
+
+{% block title %}
+	ParsonCreation
+{% endblock %}
+
+{% block header %}
+    {{ include('partials/header.html.twig') }}
+{% endblock %}
+
+{% block body %}
+<h1>Création d'un problème de Parson</h1>
+
+<div class="row">
+	<div class="col-sm-10">
+		{{ form_start(creationExerciceForm) }}
+			{{ form_widget(creationExerciceForm._token) }}
+			<div class="form-group">
+				{{ form_widget(creationExerciceForm.name) }}
+			</div>
+			<div class="form-group">
+				{{ form_widget(creationExerciceForm.description) }}
+			</div>
+			<div class="md-form">
+				{{ form_widget(creationExerciceForm.problem) }}
+				<small>
+					Le programme sera automatiquement mélangé pour créer le problème.
+				</small>
+			</div>
+			<div class="form-group">
+				{{ form_errors(creationExerciceForm) }}
+			</div>
+			<button class="btn btn-lg btn-primary" type="submit">
+				Valider
+			</button>
+		</form>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript">
+	var textareas = document.getElementsByTagName('textarea');
+	var count = textareas.length;
+	for(var i=0;i<count;i++){
+		textareas[i].onkeydown = function(e){
+			if(e.keyCode==9 || e.which==9){
+				e.preventDefault();
+				var s = this.selectionStart;
+				this.value = this.value.substring(0,this.selectionStart) + "\t" + this.value.substring(this.selectionEnd);
+				this.selectionEnd = s+1; 
+			}
+		}
+	}
+</script>
+{% endblock %}

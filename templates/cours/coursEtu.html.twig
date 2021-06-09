@@ -1,0 +1,147 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <style>
+        #exercice, #reponse { background: #eee; padding: 5px;}
+    </style>
+{% endblock %}
+
+{% block title %}
+	ParsonCreation
+{% endblock %}
+
+{% block header %}
+    {{ include('partials/header.html.twig') }}
+{% endblock %}
+
+{% block body %}
+{% if exercice %}
+    <div>
+        <h1>{{ exercice.name }}</h1>
+        <p style="white-space:pre-line">{{ exercice.description }}</p>
+        
+        <div class="row">
+            <div class="col-sm-6">
+                <ul class="list-group connectedSortable" id="exercice">
+                    {% set id = 0 %}
+                    {% for line in exercice.problem %}
+                        <div class="btn-group">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-secondary btn-primary" onClick="gauche({{id}})"><</button>
+                                <button type="button" class="btn btn-secondary btn-primary" onClick="droite({{id}})">></button>
+                            </div>
+                            <li class="list-group-item" data-indent="0" id="{{id}}">{{ line }}</li>
+                        </div>
+                        {% set id = id + 1 %}
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-sm-6">
+                <ul class="list-group connectedSortable" id="reponse">
+                </ul>
+            </div>
+        </div>
+    </div>
+    <nav>
+    <ul class="pagination justify-content-center">
+        {% set num = 1 %}
+            {% for exercice in cours.exercices %}
+                {% if exercice in done %}
+                    <li class="page-item" disabled><a class="page-link" href="{{ path('get_exo_etu', {id: cours.id, nb: num - 1}) }}">{{num}}</a></li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="{{ path('get_exo_etu', {id: cours.id, nb: num - 1}) }}">{{num}}</a></li>
+                {% endif %}
+                {% set num = num + 1 %}
+            {% endfor %}
+        <li class="page-item"><a class="page-link" href="{{ path('get_exo_etu', {id: cours.id, nb: courent + 1}) }}">suivant</a></li>
+    </ul>
+    <textarea></textarea>
+    </nav>
+{% else %}
+    <h1>Ce cours ne contient aucun exercice.</h1>
+{% endif %}
+{% endblock %}
+
+
+{% block javascripts %} 
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript">
+    $("textarea").hide();
+    $("#exercice button").hide();
+
+    $( function() {
+        $( "#exercice, #reponse" ).sortable({
+            connectWith: "ul",
+            update: function(event, ui) {
+                $("#reponse button").show();
+                $("#exercice button").hide();
+                verifier();
+            },
+        });
+
+        $( "#exercice, #reponse" ).disableSelection();
+    });
+
+    function disp( divs ) {
+        var a = [];
+        for ( var i = 0; i < divs.length; i++ ) {
+            var test = divs[ i ].innerHTML;
+            var decoded = $('<textarea/>').html(test).text();
+            a.push( decoded );
+        }
+        return a;
+    }
+
+    function verifier() {
+        var data = disp( $( "#reponse li" ).toArray());
+        $.ajax({
+            type: "POST",
+            url: "/get-solution",
+            data: {proposition: data, id: {{exercice.id}}, cours: {{cours.id}}},
+            dataType: "json",
+            async: true,
+            success: (res) => {
+                console.log(res)
+                if (res) {
+                    $("#reponse").addClass("btn-outline-success");
+                    $("#reponse").css('pointer-events', 'none');
+                }
+            },
+            error: (err) => {
+                
+            }
+        }); 
+    }
+
+    function droite(id) {
+        var indent = parseInt(document.getElementById(id).getAttribute("data-indent"), 10);
+        indent += 1;
+        $('#'+id).css('margin-left', indent * 25 + 'px');
+        var text = $('#'+id).text();
+        text = '\t' + text;
+        $('#reponse #'+id).text(text);
+        document.getElementById(id).setAttribute("data-indent", indent);
+        console.log(text);
+        verifier();
+    }
+
+        function gauche(id) {
+        var indent = parseInt(document.getElementById(id).getAttribute("data-indent"), 10);
+        if (indent != 0) {
+            indent -= 1;
+        }
+        $('#'+id).css('margin-left', indent * 25 + 'px');
+        var text = $('#'+id).text();
+        if (text.charAt(0) == '\t') {
+            text = text.substring(1);
+        }
+        $('#'+id).text(text);
+        document.getElementById(id).setAttribute("data-indent", indent);
+        console.log(text);
+        verifier();
+    }
+</script>
+{% endblock %}

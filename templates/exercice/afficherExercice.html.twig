@@ -1,0 +1,111 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+{% endblock %}
+
+{% block title %}
+	ParsonCreation
+{% endblock %}
+
+{% block header %}
+    {{ include('partials/header.html.twig') }}
+{% endblock %}
+
+{% block body %}
+    <div>
+        <h1>{{ exercice.name }}</h1>
+        
+        <div class="row">
+            <div class="col-sm-5">
+                <p style="white-space:pre-line">{{ exercice.description }}</p>
+                <p style="white-space:pre-line;overflow-x: scroll">
+                    {% for line in exercice.problem %}
+                        {{ line }}
+                    {% endfor %}
+                </p>
+            </div>
+            <div class="col-sm-7">
+                <div class="btn-group">
+                    <div class="dropdown">
+                        <a class="btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Solutions
+                        </a>
+                        {% if solutions %}
+                        <div class="dropdown-menu">
+                            {% set nb = 1 %}
+                            {% for solution in solutions %}
+                                <div class="btn-group">
+                                    <a class="btn" id="showSolution" onClick="afficherSolution({{solution.id}})">Solution {{nb}}</a>
+                                    <a href="{{ path('supprimer_solution', {id: solution.id}) }}">
+                                        <button type="button" class="btn btn-secondary btn-danger" >
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </a>
+                                </div>
+                                {% set nb = nb + 1 %}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <button type="button" class="btn btn-secondary" onClick="afficherForm()">Ajouter une solution</button>
+                </div>
+                <p style="white-space:pre-wrap;overflow-x: scroll" id="solution"></p>
+                {{ form_start(creationSolutionForm) }}
+                    <div class="form-group">
+                        {{ form_widget(creationSolutionForm._token) }}
+                        {{ form_widget(creationSolutionForm.solution) }}
+                        {{ form_errors(creationSolutionForm) }}
+                    </div>
+                    <button class="btn btn-lg btn-primary" type="submit">
+                        Valider
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block javascripts %}
+<script type="text/javascript">
+    $('form').hide();
+
+    function afficherSolution(i){
+        $("#solution").show();
+        $('form').hide();
+        $(".dropdown-menu").on('click', '#showSolution', function(){
+            $(".dropdown-toggle:first-child").text($(this).text());
+        });
+
+        $.get( "/get-solution?id=" + i, (res) => {
+            console.log(res);
+            $("#solution").text('');
+            var solution = '';
+            for (var line in res) {
+                solution += res[line] + '\n';
+            }
+            $("#solution").text(solution);
+        });
+    };
+
+    function afficherForm() {
+        $("#solution").hide();
+        $('form').show();
+        $(".btn:first-child").text('Solutions');
+    }
+
+    var textareas = document.getElementsByTagName('textarea');
+	var count = textareas.length;
+	for(var i=0;i<count;i++){
+		textareas[i].onkeydown = function(e){
+			if(e.keyCode==9 || e.which==9){
+				e.preventDefault();
+				var s = this.selectionStart;
+				this.value = this.value.substring(0,this.selectionStart) + "\t" + this.value.substring(this.selectionEnd);
+				this.selectionEnd = s+1; 
+			}
+		}
+	}
+</script>
+{% endblock %}

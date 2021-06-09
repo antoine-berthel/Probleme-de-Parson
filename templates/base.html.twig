@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>
+			{% block title %}Welcome!
+			{% endblock %}
+		</title>
+		{% block stylesheets %}
+		{% endblock %}
+	</head>
+	<header>
+	{% block header %}
+		<nav class="navbar navbar-expand-lg navbar-dark bg-primary" role="navigation">
+			<div class="container">
+					<a class="navbar-brand" href="/">Accueil</a>
+					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" 
+							aria-controls=".navbar-collapse"
+							aria-label="Toggle navigation">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+				<!-- Left -->
+				<div class="navbar-collapse collapse">
+					<ul class="nav navbar-nav mr-auto">
+						{% block leftMenu %}{% endblock %}
+					</ul>
+					<!-- Right -->
+					<ul class="nav navbar-nav ml-auto">
+						{% block rightMenu %}{% endblock %}
+					</ul>
+				</div>
+			</div>
+		</nav>
+	{% endblock %}
+	</header>
+	<body>
+		<div class="container body-container">
+			<div class="row">
+				<div id="main" class="col-sm-10">
+					{% block body %}
+					{% endblock %}
+				</div>
+			<div>
+		</div>
+		{% block javascripts %}
+		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+		{% endblock %}
+	</body>
+	<footer>
+		{% block footer %}{% endblock %}
+	</footer>
+</html>
